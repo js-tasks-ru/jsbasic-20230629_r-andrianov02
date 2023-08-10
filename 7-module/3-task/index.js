@@ -1,16 +1,16 @@
+import createElement from '../../assets/lib/create-element.js';
+
 export default class StepSlider {
   constructor({ steps, value = 0 }) {
     this.steps = steps;
     this.value = value;
     this.segment = steps - 1;
-    this.elem = this.template();
-    
     this.render();
     this.fixSliderValue();
   }
 
   template(){
-    let div = `
+    return `
     <div class="slider">
   
       <div class="slider__thumb" style="left: 50%;">
@@ -24,13 +24,12 @@ export default class StepSlider {
       </div>
     </div>
   `;
-  let html = document.createElement("div");
-  html.innerHTML = div;
-  return html.firstElementChild;
   }
 
   render(){
+    this.elem = createElement(this.template());
     this.elem.addEventListener('click', this.sliderClick);
+    return this.elem;
   }
 
   sliderClick = (event) => {

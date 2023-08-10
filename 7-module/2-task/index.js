@@ -6,7 +6,7 @@ export default class Modal {
     this.isOpen = false;
     this.title = '';
     this.node = '';
-    this.elem = this.render();
+    this.render();
     this.escape = this.pressEscape.bind(this);
   }
 
@@ -80,7 +80,7 @@ export default class Modal {
     this.isOpen = false;
     console.log('close');
     document.body.classList.remove('is-modal-open');
-    document.body.lastElementChild.remove();
+    this.elem.remove();
     document.body.removeEventListener('keydown', this.escape);
 
   }
