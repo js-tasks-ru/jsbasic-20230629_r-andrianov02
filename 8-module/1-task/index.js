@@ -49,30 +49,26 @@ export default class CartIcon {
         this.initialTopCoord = initial;
       }
 
-      console.log(this.initialTopCoord);
-      console.log(window.scrollY);
+      if (window.scrollY > this.initialTopCoord) {
+        // плавающая корзина
+        // console.log('плаваяющая корзина');
+        this.fixedPos();
+
+      } else {
+        // корзина сверху
+        // console.log('корзина сверху');
+        this.absolutePos();
+
+      }
 
       let isMobile = document.documentElement.clientWidth <= 767;
 
       // Если условие выполняется, обнуляем стили к исходным
       if (isMobile) {
         
-        console.log('Мобильное устройство');
+        // console.log('Мобильное устройство');
         this.absolutePos();
 
-      } else {
-
-        if (window.scrollY > this.initialTopCoord) {
-          // плавающая корзина
-          console.log('плаваяющая корзина');
-          this.fixedPos();
-
-        } else {
-          // корзина сверху
-          console.log('корзина сверху');
-          this.absolutePos();
-
-        }
       }
     }
   }

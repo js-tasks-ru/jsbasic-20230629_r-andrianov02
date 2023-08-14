@@ -2,69 +2,72 @@ import createElement from '../../assets/lib/create-element.js';
 import ProductCard from '../../6-module/2-task/index.js';
 
 export default class ProductGrid {
+  elem = null;
   constructor(products) {
     this.products = products;
-    this.filters = {
-      // noNuts: true, // true/false
-      // vegeterianOnly: false, // true/false
-      // maxSpiciness: 3, // числа от 0 до 4
-      // category: 'soups' // уникальный идентификатор категории товара
-    };
-    this.filteredProducts = products;
-    this.elem = createElement(this.template());
-    this.render();
+    this.filters = {};
+    this.elem = this.render();
   }
 
   template(){
     return `
     <div class="products-grid">
       <div class="products-grid__inner">
+      ${this.products
+        .filter(product => this.filteredProducts(product))
+        .map(product => {
+          const card = new ProductCard(product);
+          return card.elem.outerHTML;
+        })
+        .join('')}
       </div>
     </div>
     `
   }
 
   render(){
-    let gridInner = this.elem.querySelector('.products-grid__inner');
-    gridInner.innerHTML = '';
+    return createElement(this.template());
 
-    console.log(this.filteredProducts)
+    // let gridInner = this.elem.querySelector('.products-grid__inner');
+    // gridInner.innerHTML = '';
+
+    // console.log(this.filteredProducts)
     
 
-    this.filteredProducts.forEach(product => {
-      const card = new ProductCard(product);
-      gridInner.appendChild(card.elem);
-    });
+    // this.filteredProducts.forEach(product => {
+    //   const card = new ProductCard(product);
+    //   gridInner.appendChild(card.elem);
+    // });
     // return this.elem;
+  }
+
+  filteredProducts(product){
+      if (this.filters.noNuts && (product.nuts === true)) {
+        return false;
+      }
+      if (this.filters.vegeterianOnly && product.vegeterian !== true) {
+        return false;
+      }
+      if (this.filters.maxSpiciness && (product.spiciness > this.filters.maxSpiciness)) {
+        return false;
+      }
+      if (this.filters.category && (product.category !== this.filters.category)) {
+        return false;
+      }
+      return true;
   }
 
   updateFilter(filters) {
 
-    console.log(this.filteredProducts);
+    this.filters = { ...this.filters, ...filters };
 
-    this.filteredProducts = this.products.filter(product => {
-      if (filters.noNuts && (product.nuts === true)) {
-        console.log('false');
-        return false;
-      }
-      if (filters.vegeterianOnly && product.vegeterian !== true) {
-        console.log('false');
-        return false;
-      }
-      if (filters.maxSpiciness && product.spiciness > filters.maxSpiciness) {
-        console.log('false');
-        return false;
-      }
-      if (filters.category && product.category !== filters.category) {
-        console.log('false');
-        return false;
-      }
-      console.log('true');
-      return true;
-    });
-
-    console.log(this.filteredProducts);
-    
-    this.render(); // перерисовываем список товаров с учетом новых фильтров
+    let gridInner = this.elem.querySelector('.products-grid__inner');
+    gridInner.innerHTML = this.products
+      .filter(product => this.filteredProducts(product))
+      .map(product => {
+        const card = new ProductCard(product);
+        return card.elem.outerHTML;
+      })
+      .join('');
   }
 }

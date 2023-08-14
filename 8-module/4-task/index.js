@@ -141,16 +141,20 @@ export default class Cart {
 
     for(let product of this.cartItems){
       let productCard = this.renderProduct(product.product, product.count);
-      modalBody.appendChild(productCard);
+      modalBody.append(productCard);
     }
     let orderForm = this.renderOrderForm();
-    modalBody.appendChild(orderForm);
+    modalBody.append(orderForm);
 
     this.modal.setBody(modalBody);  
 
     this.modal.open();
     this.modal.elem.onclick = this.modalClick;
-    this.modal.elem.onsubmit = this.onSubmit;
+
+    let clickSubmit = modalBody.querySelector('.cart-form');
+    clickSubmit.addEventListener('submit', event => {
+      this.onSubmit(event);
+    });
   }
 
   modalClick = (event) => {
@@ -203,7 +207,7 @@ export default class Cart {
     this.cartIcon.update(this);
   }
 
-  onSubmit(event) {
+  async onSubmit(event) {
     event.preventDefault();
 
     let form = document.querySelector('.cart-form');
@@ -217,17 +221,13 @@ export default class Cart {
     const method = 'POST';
     const formData = new FormData(form);
 
-    fetch(url, {
+    let respons = await fetch(url, {
       method,
       body: formData
-    })
-    .then( () => {
+    });
+    if (respons.ok) {
         modalTitle.textContent = 'Success!';
-        console.log(this.cartItems);
-        if(this.cartItems){
-          console.log(this.cartItems);
-          this.cartItems.length = 0;
-        }
+        this.cartItems.length = 0;
         modalBody.innerHTML = `
         <div class="modal__body-inner">
           <p>
@@ -237,10 +237,9 @@ export default class Cart {
           </p>
         </div>
         `;
-    })
-    .catch(error => {
-      console.error('Ошибка: ', error);
-    })
+
+        this.cartIcon.update(this);
+    }
   };
 
   addEventListeners() {
